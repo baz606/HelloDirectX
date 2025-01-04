@@ -1,5 +1,6 @@
+#include <string>
+#include <sstream>
 #include <Windows.h>
-
 
 LRESULT CALLBACK WndProc(HWND hWnd,
 												 UINT msg,
@@ -17,7 +18,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 		{
 			if (wParam == 'F')
 			{
-				SetWindowText(hWnd, L"F key is pressed");
+				SetWindowText(hWnd, "F key is pressed");
 			}
 			break;
 		}
@@ -25,13 +26,36 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 		{
 			if (wParam == 'F')
 			{
-				SetWindowText(hWnd, L"F key is released");
+				SetWindowText(hWnd, "F key is released");
 			}
 			break;
 		}
-		default:
-			return DefWindowProc(hWnd, msg, wParam, lParam);
+		case WM_CHAR:
+		{
+			static std::string title;
+			if ((char)wParam == VK_BACK)
+			{
+				if (title.size() > 0)
+				{
+					title.pop_back();
+				}
+			}
+			else
+			{
+				title.push_back((char)wParam);
+			}
+			SetWindowText(hWnd, title.c_str());
+			break;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			POINTS pt = MAKEPOINTS(lParam);
+			std::ostringstream oss;
+			oss << "(" << pt.x << "," << pt.y << ")";
+			SetWindowText(hWnd, oss.str().c_str());
+		}
 	}
+	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 int CALLBACK WinMain(HINSTANCE hInstance,
@@ -39,7 +63,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
 										 LPSTR lpCmdLine,
 										 int nCmdShow)
 {
-	const auto pClassName = L"HelloDirectX";
+	const auto pClassName = "HelloDirectX";
 	// register window class
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
@@ -57,7 +81,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
 
 	RegisterClassEx(&wc);
 
-	HWND hWnd = CreateWindowEx(0, pClassName, L"HelloDirectX",
+	HWND hWnd = CreateWindowEx(0, pClassName, "HelloDirectX",
 														 WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 														 200, 200, 640, 480, nullptr, nullptr,
 														 hInstance, nullptr
