@@ -13,6 +13,22 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 			PostQuitMessage(0);
 			break;
 		}
+		case WM_KEYDOWN:
+		{
+			if (wParam == 'F')
+			{
+				SetWindowText(hWnd, L"F key is pressed");
+			}
+			break;
+		}
+		case WM_KEYUP:
+		{
+			if (wParam == 'F')
+			{
+				SetWindowText(hWnd, L"F key is released");
+			}
+			break;
+		}
 		default:
 			return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
